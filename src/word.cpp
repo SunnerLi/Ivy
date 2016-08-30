@@ -70,6 +70,14 @@ bool Word::setNumberOfWatch(int _){
 	Ret: The corresponding value
 */
 
+char* Word::getEnglish() {
+    return englist;
+}
+
+char* Word::getChinese() {
+    return chinese;
+}
+
 const char* Word::getEnglish() const{
     return englist;
 }
@@ -98,6 +106,24 @@ Word& Word::operator=(const Word &wrd) {
     this->setNumberOfWrong(wrd.getNumberOfWrong());
     this->setNumberOfWatch(wrd.getNumberOfWatch());
 	return *this;  					// Return a reference to myself.
+}
+
+bool Word::operator== (const int n) {
+    if(n!=0)
+        cout << "Error comparasion!" << endl;
+    else{
+        char enErr[20] = "    ";
+        char chErr[20] = "錯誤";
+        if( strcmp(englist, enErr) == 0 &&
+            strcmp(chinese, chErr) == 0)
+            return true;
+        return false;
+    }
+}
+
+bool Word::operator== (const Word &wrd){
+    return (englist == wrd.getEnglish() &&
+            chinese == wrd.getChinese());
 }
 
 // ----- Judge method -----

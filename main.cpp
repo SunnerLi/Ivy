@@ -1,13 +1,20 @@
 #include <iostream>
+#include "tree.h"
 #include "word.h"
 
 using namespace std;
 
 int main(){
-    Word w("人", "hi");
-    for(int i=0; i<4; i++){
-        cout << int(w.getChinese()[i]) << ' ';
-    }
-    cout << endl;
+    
+    Tree t("apple", "蘋果");
+    t.insert("cat", "貓");
+    t.insert("dog", "狗");
+    t.del("apple");
+    t.reassemble();
+    t.inorderTreeWalk();
+
+    Tree t2 = t.buildTreeView(1, TREEVIEW_WATCH);
+    t2.inorderTreeWalk();
+    
     return 0;
 }

@@ -25,7 +25,7 @@ $(TARGET) : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJS) $(MAIN) -o $@
 
 $(OBJ): %.o : $(LIBDIR)%.cpp
-	$(CC) $(CFLAGS) -c $< -o $(OBJDIR)$@ 
+	$(CC) -c $< -o $(OBJDIR)$@ $(CFLAGS)
 
 clean:
 	rm -r $(OBJS)

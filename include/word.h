@@ -6,6 +6,8 @@
 
 #define ENGLISH_LENGTH 200
 #define CHINESE_LENGTH 200
+#define TREEVIEW_WATCH 0
+#define TREEVIEW_WRONG 1
 
 class Word{
     public:
@@ -21,8 +23,10 @@ class Word{
         bool setNumberOfWatch(int _);
 
         // Get method
-        const char* getEnglish() const;
-        const char* getChinese() const;
+        char* getEnglish();
+        char* getChinese();
+        const char* getEnglish()const;
+        const char* getChinese()const;
         Date getDate() const;
         int getNumberOfWrong() const;
         int getNumberOfWatch() const;
@@ -33,6 +37,8 @@ class Word{
 
         // Other method
         Word& operator=(const Word &wrd);
+        bool operator== (const int n);
+        bool operator== (const Word &wrd);
 
     private:
         char englist[ENGLISH_LENGTH];
