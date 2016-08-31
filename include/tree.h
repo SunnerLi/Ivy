@@ -20,6 +20,8 @@ class Tree{
         void reassemble();
         void inorderTreeWalk();
         Tree buildTreeView(int value, int type);
+        bool isExist(char* eng, char* chi);
+        bool isExist(char* _);
     private:
         Node* root;
 };

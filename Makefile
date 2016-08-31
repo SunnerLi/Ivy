@@ -8,7 +8,7 @@ LIBDIR=./src/
 OBJDIR=./obj/
 
 # The obj file
-OBJ=date.o word.o node.o tree.o
+OBJ=date.o word.o node.o tree.o err.o
 OBJS=$(addprefix $(OBJDIR), $(OBJ))
 
 # The target file
@@ -25,7 +25,7 @@ $(TARGET) : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJS) $(MAIN) -o $@
 
 $(OBJ): %.o : $(LIBDIR)%.cpp
-	$(CC) -c $< -o $(OBJDIR)$@ $(CFLAGS)
+	$(CC) $(CFLAGS) -c $< -o $(OBJDIR)$@
 
 clean:
 	rm -r $(OBJS)

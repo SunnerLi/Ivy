@@ -31,15 +31,19 @@ class Node{
         Node* getLeftChild() const;
         Node* getRightChild() const;
 
-        // Other method
-        Node& operator=(const Node &node);
-        int direction(Word _);
-        int direction(Node __);
+        // Tree method
         void inorderTreeWalk();
         void buildTreeWalkQ(queue<Word> &q);
         void buildTreeView(int value, int type, queue<Word> &q);
         bool del(Word _);
         bool del(char* _);
+        int direction(Word _);
+        int direction(Node __);
+        bool isExist(char* _);
+
+        // Overloadding operator
+        Node& operator=(const Node &node);
+
     private:
         Word word;
         Node* left;

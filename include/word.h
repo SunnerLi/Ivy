@@ -35,7 +35,7 @@ class Word{
         bool isEnglish(const char* _);
         bool isChinese(const char* _);
 
-        // Other method
+        // Overloadding operator
         Word& operator=(const Word &wrd);
         bool operator== (const int n);
         bool operator== (const Word &wrd);

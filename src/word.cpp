@@ -1,9 +1,10 @@
 #include <iostream>
 #include <cstring>
 #include "word.h"
+#include "err.h"
 using namespace std;
 
-// Constructor Implementation
+// ----- Constructor Implementation -----
 Word::Word(char* eng, char* chi){
     if(this->isEnglish(eng))
         this->setEnglish(eng);
@@ -11,7 +12,7 @@ Word::Word(char* eng, char* chi){
         cout << "The first string should be in english..." << endl
              << "The input is: " << eng << endl
              << "set as 'None'..." << endl;
-        this->setEnglish("None");
+        this->setEnglish(__enErr);
     }
     if(this->isChinese(chi))
         this->setChinese(chi);
@@ -19,7 +20,7 @@ Word::Word(char* eng, char* chi){
         cout << "第二個字串須為中文 ..." << endl
              << "輸入為： " << chi << endl
              << "設為 '錯誤' ..." << endl;
-        this->setEnglish("錯誤");
+        this->setEnglish(__chErr);
     }
 
     // Set default value
@@ -31,11 +32,11 @@ Word::Word(char* eng, char* chi){
 }
 
 /*
-	Insert Method
-
-	Arg: the value want to set
-	Ret: If successfully set (Or none)
-*/
+ *  Insert Method
+ *
+ *  Arg:    the value want to set
+ *  Ret:    If successfully set (Or none)
+ */
 void Word::setEnglish(const char* eng){
     strcpy(englist, eng);
 }
@@ -65,11 +66,10 @@ bool Word::setNumberOfWatch(int _){
 }
 
 /*
-	Get Method
-
-	Ret: The corresponding value
-*/
-
+ *  Get Method
+ *
+ *  Ret:    The corresponding value
+ */
 char* Word::getEnglish() {
     return englist;
 }
@@ -98,42 +98,14 @@ int Word::getNumberOfWatch() const{
     return numberOfWatch;
 }
 
-// Other method
-Word& Word::operator=(const Word &wrd) {
-	this->setEnglish(wrd.getEnglish());
-    this->setChinese(wrd.getChinese());
-    this->setDate(wrd.getDate());
-    this->setNumberOfWrong(wrd.getNumberOfWrong());
-    this->setNumberOfWatch(wrd.getNumberOfWatch());
-	return *this;  					// Return a reference to myself.
-}
-
-bool Word::operator== (const int n) {
-    if(n!=0)
-        cout << "Error comparasion!" << endl;
-    else{
-        char enErr[20] = "    ";
-        char chErr[20] = "錯誤";
-        if( strcmp(englist, enErr) == 0 &&
-            strcmp(chinese, chErr) == 0)
-            return true;
-        return false;
-    }
-}
-
-bool Word::operator== (const Word &wrd){
-    return (englist == wrd.getEnglish() &&
-            chinese == wrd.getChinese());
-}
-
 // ----- Judge method -----
 /*
-    Judge if the string is in english.
-    It depend on the first two character.
-
-    Arg: string
-    Ret: if it's english'
-*/
+ *  Judge if the string is in english.
+ *  It depend on the first two character.
+ *
+ *  Arg:    String
+ *  Ret:    If it's english
+ */
 bool Word::isEnglish(const char* _){
     if(sizeof(_) < 2*sizeof(char)){
         cout << "The string is too short to judge" << endl;
@@ -146,12 +118,40 @@ bool Word::isEnglish(const char* _){
 }
 
 /*
-    Judge if the string is in english.
-    It's tricky that it would judge as chinese if it's not english
-
-    Arg: string
-    Ret: if it's english'
-*/
+ *  Judge if the string is in english.
+ *  It's tricky that it would judge as chinese if it's not english
+ *
+ *  Arg:    String
+ *  Ret:    If it's english'
+ */
 bool Word::isChinese(const char* _){
     return !(this->isEnglish(_));
+}
+
+// ----- Overloadding operator -----
+Word& Word::operator=(const Word &wrd) {
+	this->setEnglish(wrd.getEnglish());
+    this->setChinese(wrd.getChinese());
+    this->setDate(wrd.getDate());
+    this->setNumberOfWrong(wrd.getNumberOfWrong());
+    this->setNumberOfWatch(wrd.getNumberOfWatch());
+	return *this;  					// Return a reference to myself.
+}
+
+bool Word::operator== (const int n) {
+    if(n!=0){
+        cout << "Error comparasion!" << endl;
+        return false;
+    }
+    else{
+        if( strcmp(englist, __enErr) == 0 &&
+            strcmp(chinese, __chErr) == 0)
+            return true;
+        return false;
+    }
+}
+
+bool Word::operator== (const Word &wrd){
+    return ( !strcmp(englist, wrd.getEnglish()) &&
+             !strcmp(chinese, wrd.getChinese()));
 }

@@ -25,6 +25,8 @@ class Date{
 		// Other method
 		void Now();
 		void show(struct tm* now);
+
+		// Overloadding operator
 		Date& operator=(const Date &rhs);
 	private:
 		int year;

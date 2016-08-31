@@ -3,9 +3,10 @@
 #include <cstring>
 #include "word.h"
 #include "tree.h"
+#include "err.h"
 using namespace std;
 
-// Constructor
+// ----- Constructor -----
 Tree::Tree(char* eng, char* chi){
     root = new Node(eng, chi);
 }
@@ -18,44 +19,52 @@ Tree::Tree(Node _){
     root = new Node(_);
 }
 
-// Method
+// ----- Method -----
 bool Tree::insert(char* eng, char* chi){
     Word _(eng, chi);
     return insert(_);
 }
 
 bool Tree::insert(Word _){
-    Node node(_);
-    Node *curr;
-    Node *prev;
-    curr = root;
-    int finalDir = -1;
-    
-    while(curr != 0){
-        prev = curr;
-        finalDir = curr->direction(node);
-        if( finalDir == LEFT)
-            curr = curr->getLeftChild();
-        else
-            curr = curr->getRightChild();
+    if(!isExist(_.getEnglish())){
+        Node node(_);
+        Node *curr;
+        Node *prev;
+        curr = root;
+        int finalDir = -1;
+
+        while(curr != 0){
+            prev = curr;
+            finalDir = curr->direction(node);
+            if( finalDir == LEFT)
+                curr = curr->getLeftChild();
+            else
+                curr = curr->getRightChild();
+        }
+
+        if(finalDir == LEFT){
+            prev->setLeftChild(node);
+        }
+        else{
+            prev->setRightChild(node);
+        }
+        return true;
     }
-    
-    if(finalDir == LEFT){
-        prev->setLeftChild(node);
-    }
-    else{
-        prev->setRightChild(node);
-    }
-    return true;
+    return false;       // If had exist, discard
 }
 
+/*
+ *  Delete the element from the tree
+ *
+ *  Arg:    The english and chinese string that want to delete
+ *  Ret:    If successfully delete
+ */
 bool Tree::del(char* eng, char* chi){
     if(root != 0){
         // If exist in root
         if(root->getWord().getEnglish() == eng &&
             root->getWord().getChinese() == chi){
-            Word _("    ", "錯誤");
-            root->setWord(_);
+            root->setWord(__wordErr);
             return true;
         }
         
@@ -73,13 +82,18 @@ bool Tree::del(char* eng, char* chi){
     return false;
 }
 
+/*
+ *  Delete the element from the tree
+ *
+ *  Arg:    The english or chinese string that want to delete
+ *  Ret:    If successfully delete
+ */
 bool Tree::del(char* _){
     if(root != 0){
         // If exist in root
         if( strcmp(root->getWord().getEnglish(), _) ||
             strcmp(root->getWord().getChinese(), _)){
-            Word _("    ", "錯誤");
-            root->setWord(_);
+            root->setWord(__wordErr);
             return true;
         }
 
@@ -94,10 +108,19 @@ bool Tree::del(char* _){
     }
 }
 
+/*
+ *  Delete the element from the tree
+ *
+ *  Arg:    The word object that want to delete
+ *  Ret:    If successfully delete
+ */
 bool Tree::del(Word _){
     return this->del(_.getEnglish(), _.getChinese());
 }
 
+/*
+ *  Re-assemble the tree to delete the space-node which would generate after deleting
+ */
 void Tree::reassemble(){
     // Copy the original tree
     queue<Word> q;
@@ -130,6 +153,9 @@ void Tree::reassemble(){
     }
 }
 
+/*
+ *  In-order tree walk to show the tree structure
+ */
 void Tree::inorderTreeWalk(){
     Node *curr = root;
     if(curr -> getLeftChild() != 0)
@@ -139,6 +165,12 @@ void Tree::inorderTreeWalk(){
         curr -> getRightChild() -> inorderTreeWalk();
 }
 
+/*
+ *  Build a temporary tree which meet the corresponding confition
+ *
+ *  Arg:    Condition value and condition type
+ *  Ret:    The new tree object
+ */
 Tree Tree::buildTreeView(int value, int type){
     // Copy the original tree
     queue<Word> q;
@@ -164,7 +196,36 @@ Tree Tree::buildTreeView(int value, int type){
         }
         return *newT;
     }else{
-        Word w("    ", "錯誤");
-        return *(new Tree(w));
+        return *(new Tree(__wordErr));
+    }
+}
+
+/*
+ *  Judge if the english or chinese string exist recursively
+ *
+ *  Arg:    The english and chinese string want to examine
+ *  Ret:    If it's exist
+ */
+bool Tree::isExist(char* eng, char* chi){
+    return isExist(eng);
+}
+
+/*
+ *  Judge if the english or chinese string exist recursively
+ *
+ *  Arg:    The english or chinese string want to examine
+ *  Ret:    If it's exist
+ */
+bool Tree::isExist(char* _){
+    Node* curr = root;
+    if( !strcmp(curr -> getWord().getEnglish(), _))
+        return true;
+    else{
+        bool hadExist = false;
+        if(curr -> getLeftChild() != 0)
+            hadExist = hadExist || curr -> getLeftChild() -> isExist(_);
+        if(curr -> getRightChild() != 0)
+            hadExist = hadExist || curr -> getRightChild() -> isExist(_);
+        return hadExist;
     }
 }

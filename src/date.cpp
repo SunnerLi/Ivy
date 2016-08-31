@@ -70,10 +70,7 @@ int Date::getMinute() const{
 }
 
 // ----- Other method -----
-
-/*
-	Get the current time
-*/
+// Get the current time
 void Date::Now(){
 	time_t d = time(0);
 	struct tm *now = localtime(&d);
@@ -98,6 +95,7 @@ void Date::show(struct tm* now){
 		 << "minute: " << now->tm_min << endl;
 }
 
+// ----- Overloadding operator -----
 Date& Date::operator=(const Date &rhs) {
 	setYear(rhs.getYear());
 	setMonth(rhs.getMonth());
