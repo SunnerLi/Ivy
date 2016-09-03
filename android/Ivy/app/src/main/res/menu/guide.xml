@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/fundamental_mode"
+            android:checked="false"
+            android:icon="@drawable/icon_fundamental_black_small"
+            android:title="@string/fundamental_mode"/>
+        <item
+            android:id="@+id/advance_mode"
+            android:checked="false"
+            android:icon="@drawable/icon_advance_black_small"
+            android:title="@string/advance_mode"/>
+        <item
+            android:id="@+id/strengthen_mode"
+            android:checked="false"
+            android:icon="@drawable/icon_strengthen_black_small"
+            android:title="@string/strengthen_mode"/>
+        <item
+            android:id="@+id/listen_mode"
+            android:checked="false"
+            android:icon="@drawable/icon_listen_black_small"
+            android:title="@string/listen_mode"/>
+        <item
+            android:id="@+id/how"
+            android:checked="false"
+            android:icon="@drawable/icon_how_black_small"
+            android:title="@string/how"/>
+    </group>
+</menu>
