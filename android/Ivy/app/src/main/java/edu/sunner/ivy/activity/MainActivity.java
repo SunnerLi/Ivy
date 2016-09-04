@@ -3,6 +3,7 @@ package edu.sunner.ivy.activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -104,6 +105,23 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new ListenFragment();
                 bundle.putInt(Constant.MODE_KEY, Constant.LISTEN);
                 break;
+            case R.id.How:
+                try {
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            super.run();
+                            Intent intent = new Intent();
+                            intent.setClass(MainActivity.this, DirectionActivity.class);
+                            startActivity(intent);
+                        }
+                    }.start();
+                    return true;
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    break;
+                }
+
             default:
                 Log.e("??", "error mode");
         }

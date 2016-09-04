@@ -8,5 +8,6 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
     <string name="setting">Setting</string>
+    <string name="title_activity_est">est</string>
 
 </resources>

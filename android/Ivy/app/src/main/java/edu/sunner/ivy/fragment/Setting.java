@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import edu.sunner.ivy.Constant;
 import edu.sunner.ivy.ListAdapter.SettingListAdapter;
@@ -30,6 +31,7 @@ public class Setting extends Fragment {
             "\n\tOpen Speaking",
             "\n\tPractice Mode"
     };
+    Spinner[] spinners = new Spinner[3];
 
     @Nullable
     @Override
@@ -46,7 +48,6 @@ public class Setting extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-
             }
         });
 
@@ -86,6 +87,4 @@ public class Setting extends Fragment {
 
         return view;
     }
-
-
 }

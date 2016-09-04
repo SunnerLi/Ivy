@@ -22,7 +22,7 @@
             android:icon="@drawable/icon_listen_black_small"
             android:title="@string/listen_mode"/>
         <item
-            android:id="@+id/how"
+            android:id="@+id/How"
             android:checked="false"
             android:icon="@drawable/icon_how_black_small"
             android:title="@string/how"/>

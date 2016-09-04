@@ -44,7 +44,7 @@
 
         <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/score"
-            android:layout_width="120dp"
+            android:layout_width="130dp"
             android:layout_height="60dp"
             android:layout_gravity="center">
 
@@ -74,11 +74,13 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/choose1"
                 android:layout_width="180dp"
                 android:layout_height="120dp"
                 android:text="choose1" />
 
             <Button
+                android:id="@+id/choose2"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:text="choose2" />
@@ -91,11 +93,13 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/choose3"
                 android:layout_width="180dp"
                 android:layout_height="120dp"
                 android:text="choose3" />
 
             <Button
+                android:id="@+id/choose4"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:text="choose4" />
