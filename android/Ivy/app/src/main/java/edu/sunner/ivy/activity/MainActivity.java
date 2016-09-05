@@ -1,5 +1,8 @@
 package edu.sunner.ivy.activity;
 
+// http://www.cnblogs.com/bluesky4485/archive/2011/11/30/2269198.html
+// https://gist.github.com/ownwell/c32878440216f1866842
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -14,19 +17,27 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import edu.sunner.ivy.Constant;
-import edu.sunner.ivy.MainFragment;
 import edu.sunner.ivy.R;
-import edu.sunner.ivy.chooseFrom4;
+import edu.sunner.ivy.fragment.ChooseFromFourFragment;
 import edu.sunner.ivy.fragment.ListenFragment;
+import edu.sunner.ivy.fragment.MainFragment;
 
+/**
+ * This Activity is the first activity that the program would enter
+ *
+ * @author sunner
+ * @since 9/3/16.
+ */
 public class MainActivity extends AppCompatActivity {
+    // View & layout object
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
-    private DrawerLayout mDrawerLayout;
-    NavigationView mNavigationView;
+    // The drawerToggle object.
     private ActionBarDrawerToggle drawerToggle;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -34,26 +45,29 @@ public class MainActivity extends AppCompatActivity {
         setMainFragment();
     }
 
-    /*
-        Set the navigation view and drawer view object
+    /**
+     * Set the navigation view and drawer view object.
      */
     private void setNavigationDrawer() {
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        setupDrawerContent(mNavigationView);
+        setupDrawerContent(navigationView);
 
         // http://stackoverflow.com/questions/28450066/show-the-three-lines-at-navigation-drawer
-        drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
+        drawerToggle = new ActionBarDrawerToggle(this,
+            drawerLayout, toolbar,
+            R.string.drawer_open,
+            R.string.drawer_close);
     }
 
-    /*
-        Set the main fragment to the main layout
+    /**
+     * Set the main fragment to the main layout.
      */
     private void setMainFragment() {
         Fragment fragment = new MainFragment();
@@ -63,67 +77,86 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
+    /**
+     * Implement the navigation listener.
+     *
+     * @param navigationView The navigation view object
+     */
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
-                        mDrawerLayout.closeDrawers();
-                        return practice(menuItem);
-                    }
-                });
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    menuItem.setChecked(true);
+                    drawerLayout.closeDrawers();
+                    return practice(menuItem);
+                }
+            });
     }
 
-    // 3 lines...
+    /**
+     * Override this method to show the three-line pattern.
+     * You can open the drawer layout by pressing this pattern
+     *
+     * @param savedInstanceState The override object
+     */
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
     }
 
-    // Jump to the particular fragment
-    public boolean practice(MenuItem menuItem) {
+    /**
+     * Jump to the particular fragment.
+     *
+     * @param menuItem The override object
+     * @return always true
+     */
+    public boolean practice(final MenuItem menuItem) {
         menuItem.setChecked(true);
 
         Fragment fragment = null;
         Bundle bundle = new Bundle();
         switch (menuItem.getItemId()) {
             case R.id.fundamental_mode:
-                fragment = new chooseFrom4();
+                fragment = new ChooseFromFourFragment();
                 bundle.putInt(Constant.MODE_KEY, Constant.FUNDAMENTAL);
                 break;
             case R.id.advance_mode:
-                fragment = new chooseFrom4();
+                fragment = new ChooseFromFourFragment();
                 bundle.putInt(Constant.MODE_KEY, Constant.ADVANCE);
                 break;
             case R.id.strengthen_mode:
-                fragment = new chooseFrom4();
+                fragment = new ChooseFromFourFragment();
                 bundle.putInt(Constant.MODE_KEY, Constant.STRENGTHEN);
                 break;
             case R.id.listen_mode:
                 fragment = new ListenFragment();
                 bundle.putInt(Constant.MODE_KEY, Constant.LISTEN);
                 break;
+            case R.id.quit:
+                finish();
+                return true;
             case R.id.How:
                 try {
-                    new Thread(){
+                    new Thread() {
                         @Override
                         public void run() {
                             super.run();
                             Intent intent = new Intent();
-                            intent.setClass(MainActivity.this, DirectionActivity.class);
+                            intent.setClass(MainActivity.this,
+                                DirectionActivity.class);
                             startActivity(intent);
                         }
                     }.start();
                     return true;
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
+                } catch (NullPointerException err) {
+                    err.printStackTrace();
                     break;
                 }
 
             default:
-                Log.e("??", "error mode");
+                Log.e("MAY_TAG", "error mode");
         }
         fragment.setArguments(bundle);
 

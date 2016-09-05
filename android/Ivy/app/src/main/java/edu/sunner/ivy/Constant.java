@@ -1,38 +1,67 @@
 package edu.sunner.ivy;
 
 /**
- * Created by sunner on 9/3/16.
+ * The Constants class
+ *
+ * @author sunner
+ * @since 9/3/16.
  */
 public class Constant {
     // Bundle Key
-    public final static String MODE_KEY = "mode key";
+    public static final String MODE_KEY = "mode key";
+
+    // Shared Preference Name
+    public static final String PRE_NAME = "Preference Ivy name";
 
     // Preference Key
-    public final static String PRE_NAME = "Preference Ivy name";
-    public final static String SETTING_SHOWTEXT_KEY = "show key";
-    public final static String SETTING_SPEAKING_KEY = "speak key";
-    public final static String SETTING_MODE_KEY = "mode key";
+    public static final String SETTING_SHOWTEXT_KEY = "show key";
+    public static final String SETTING_SPEAKING_KEY = "speak key";
+    public static final String SETTING_MODE_KEY = "mode key";
 
-    // Mode
-    public final static int FUNDAMENTAL = 0;
-    public final static int ADVANCE = 1;
-    public final static int STRENGTHEN = 2;
-    public final static int LISTEN = 3;
+    // Mode Constant
+    public static final int FUNDAMENTAL = 0;
+    public static final int ADVANCE = 1;
+    public static final int STRENGTHEN = 2;
+    public static final int LISTEN = 3;
 
     // Date limitation
-    public final static int YEAR_MAX = 2016;
-    public final static int MONTH_MAX = 12;
-    public final static int DAY_MAX = 31;
-    public final static int HOUR_MAX = 24;
-    public final static int MINUTE_MAX = 60;
+    public static final int YEAR_MAX = 2016;
+    public static final int MONTH_MAX = 12;
+    public static final int DAY_MAX = 31;
+    public static final int HOUR_MAX = 24;
+    public static final int MINUTE_MAX = 60;
 
     // Edition Constants
-    public final static int VIVIAN_EDITION = 100;
-    public final static int IVY_EDITION = 101;
+    public static final int VIVIAN = 100;
+    public static final int IVY = 101;
 
     // Setting Constants
-    public final static int YES = 1;
-    public final static int NO = 0;
-    public final static int FOUR_CHOOSE_ONE = 2;
-    public final static int FOUR_DELETE_THREE = 3;
+    public static final int YES = 1;
+    public static final int NO = 0;
+    public static final int FOUR_CHOOSE_ONE = 2;
+    public static final int FOUR_DELETE_THREE = 3;
+
+    /*
+        Log tag
+        The prefix rule: each capital letter and the final alphabet
+     */
+    public static final String DAY_TAG = "-->> DirectionActivity ";
+    public static final String MAY_TAG = "-->> MainActivity ";
+    public static final String ADFT_TAG = "-->> AdvanceDirectFragment ";
+    public static final String FDFT_TAG = "-->> FundamentalDirectFragment ";
+    public static final String LDFT_TAG = "-->> ListenDirectFragment ";
+    public static final String SDFT_TAG = "-->> StrengthenDirectFragment ";
+    public static final String CFFFT_TAG = "-->> ChooseFrom4 ";
+    public static final String LFT_TAG = "-->> ListenFragment ";
+    public static final String MFT_TAG = "-->> MainFragment ";
+    public static final String SFT_TAG = "-->> SettingFragment ";
+    public static final String DAR_TAG = "-->> DirectionAdapter ";
+    public static final String LLAR_TAG = "-->> ListenListAdapter ";
+    public static final String MLAR_TAG = "-->> MainListAdapter ";
+    public static final String SLAR_TAG = "-->> SettingList ";
+    public static final String CT_TAG = "-->> Constant ";
+    public static final String DE_TAG = "-->> Date ";
+    public static final String FS_TAG = "-->> FragmentStack ";
+    public static final String PR_TAG = "-->> Parser ";
+    public static final String WD_TAG = "-->> Word ";
 }

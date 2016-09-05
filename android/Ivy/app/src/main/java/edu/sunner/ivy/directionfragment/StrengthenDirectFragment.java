@@ -1,4 +1,4 @@
-package edu.sunner.ivy.direction_fragment;
+package edu.sunner.ivy.directionfragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,14 +10,21 @@ import android.view.ViewGroup;
 import edu.sunner.ivy.R;
 
 /**
- * Created by sunner on 9/4/16.
+ * Ths one fragment that would be used in DirectionActivity.
+ * It shows the used of the listen mode.
+ *
+ * @author sunner
+ * @since 9/4/16.
  */
 public class StrengthenDirectFragment extends Fragment {
-    View view;
+
+    // The view object
+    private View view;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.fragment_direction_strengthen, container, false);
 

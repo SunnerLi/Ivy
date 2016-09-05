@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">Ivy</string>
+
     <string name="fundamental_mode">Fundamental Mode</string>
     <string name="advance_mode">Advance Mode</string>
     <string name="strengthen_mode">Strengthen Mode</string>
     <string name="listen_mode">Listen Mode</string>
+    <string name="quit">Quit</string>
+
     <string name="how">How</string>
+
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
     <string name="setting">Setting</string>

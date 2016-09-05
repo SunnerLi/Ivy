@@ -1,30 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/fundamental_mode"
-            android:checked="false"
-            android:icon="@drawable/icon_fundamental_black_small"
-            android:title="@string/fundamental_mode"/>
-        <item
-            android:id="@+id/advance_mode"
-            android:checked="false"
-            android:icon="@drawable/icon_advance_black_small"
-            android:title="@string/advance_mode"/>
-        <item
-            android:id="@+id/strengthen_mode"
-            android:checked="false"
-            android:icon="@drawable/icon_strengthen_black_small"
-            android:title="@string/strengthen_mode"/>
-        <item
-            android:id="@+id/listen_mode"
-            android:checked="false"
-            android:icon="@drawable/icon_listen_black_small"
-            android:title="@string/listen_mode"/>
-        <item
-            android:id="@+id/How"
-            android:checked="false"
-            android:icon="@drawable/icon_how_black_small"
-            android:title="@string/how"/>
+
     </group>
+
+    <item android:title="Main Function"
+        android:layout_gravity="bottom"
+        >
+        <menu>
+            <item
+                android:id="@+id/fundamental_mode"
+                android:checked="false"
+                android:icon="@drawable/ic_directions_walk_black_24dp"
+                android:title="@string/fundamental_mode"/>
+            <item
+                android:id="@+id/advance_mode"
+                android:checked="false"
+                android:icon="@drawable/ic_school_black_24dp"
+                android:title="@string/advance_mode"/>
+            <item
+                android:id="@+id/strengthen_mode"
+                android:checked="false"
+                android:icon="@drawable/ic_trending_up_black_24dp"
+                android:title="@string/strengthen_mode"/>
+            <item
+                android:id="@+id/listen_mode"
+                android:checked="false"
+                android:icon="@drawable/ic_hearing_black_24dp"
+                android:title="@string/listen_mode"/>
+            <item
+                android:id="@+id/quit"
+                android:checked="false"
+                android:icon="@drawable/ic_watch_later_black_24dp"
+                android:title="@string/quit"/>
+        </menu>
+    </item>
+
+    <item android:title="Direction"
+        android:layout_gravity="bottom"
+        >
+        <menu>
+            <item
+                android:id="@+id/How"
+                android:checked="false"
+                android:icon="@drawable/ic_live_help_black_24dp"
+                android:title="@string/how"/>
+        </menu>
+    </item>
 </menu>

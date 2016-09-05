@@ -8,23 +8,40 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import edu.sunner.ivy.R;
+import edu.sunner.ivy.directionfragment.AdvanceDirectFragment;
+import edu.sunner.ivy.directionfragment.FundamentalDirectFragment;
+import edu.sunner.ivy.directionfragment.ListenDirectFragment;
+import edu.sunner.ivy.directionfragment.StrengthenDirectFragment;
+import edu.sunner.ivy.listadapter.DirectionAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.sunner.ivy.ListAdapter.DirectionAdapter;
-import edu.sunner.ivy.R;
-import edu.sunner.ivy.direction_fragment.AdvanceDirectFragment;
-import edu.sunner.ivy.direction_fragment.ListenDirectFragment;
-import edu.sunner.ivy.direction_fragment.StrengthenDirectFragment;
-import edu.sunner.ivy.fragment.FundamentalDirectFragment;
 
 /**
- * Created by sunner on 9/3/16.
+ * This activity contain the implementation of direction fragments
+ * It contain AdvanceDirectFragment, FundamentalDirectFragment,
+ * ListenDirecFragment and StrengthenDirectFragment.
+ *
+ * @author sunner
+ * @since 9/3/16.
  */
 public class DirectionActivity extends AppCompatActivity {
+    // View object
     private TabLayout tabLayout;
     private ViewPager viewPager;
+
+    // The direction adapter object.
     private DirectionAdapter adapter;
+
+    // The image source array.
+    private Integer[] imageId = {
+        R.drawable.ic_directions_walk_black_big_24dp,
+        R.drawable.ic_school_black_big_24dp,
+        R.drawable.ic_trending_up_black_big_24dp,
+        R.drawable.ic_hearing_black_big_24dp
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +50,8 @@ public class DirectionActivity extends AppCompatActivity {
 
         initViewPager();
 
-        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab1);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab1);
+        fab.setImageResource(R.drawable.ic_arrow_back_black_24dp);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,26 +60,31 @@ public class DirectionActivity extends AppCompatActivity {
         });
     }
 
-    /*
-        Initial view pager and tab layout
+    /**
+     * Initial view pager and tab layout.
      */
     private void initViewPager() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         List<String> titles = new ArrayList<String>();
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) {
             titles.add(" ");
+        }
 
         setupViewPager();
         setupTablayout(titles);
     }
 
+    /**
+     * Set up the view pager (include add the fragment and set the adapter).
+     */
     public void setupViewPager() {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onPageScrolled(int position, float positionOffset,
+                                       int positionOffsetPixels) {
             }
 
             @Override
@@ -80,15 +103,23 @@ public class DirectionActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
+    /**
+     * Set the lable layout, add the icon tabs.
+     *
+     * @param titles The array contain the name of the title
+     */
     public void setupTablayout(List<String> titles) {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setupWithViewPager(viewPager);
 
-        //for (int i = 0; i < titles.size(); i++)
-        //    tabLayout.addTab(tabLayout.newTab().setText(titles.get(i)));
-        for (int i = 0; i < tabLayout.getTabCount(); i++)
-            tabLayout.getTabAt(i).setIcon(R.drawable.icon_advance_black_small);
+        /*
+        for (int i = 0; i < titles.size(); i++)
+            tabLayout.addTab(tabLayout.newTab().setText(titles.get(i)));
+        */
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            tabLayout.getTabAt(i).setIcon(imageId[i]);
+        }
 
         //给TabLayout设置适配器
         //tabLayout.setTabsFromPagerAdapter(adapter);

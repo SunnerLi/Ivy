@@ -1,11 +1,12 @@
-package edu.sunner.ivy.ListAdapter;
+package edu.sunner.ivy;
 
 import java.util.Calendar;
 
-import edu.sunner.ivy.Constant;
-
 /**
- * Created by sunner on 9/4/16.
+ * Date structure
+ *
+ * @author sunner
+ * @since 9/4/16.
  */
 public class Date {
     private int year;
@@ -15,78 +16,123 @@ public class Date {
     private int minute;
 
     // ----- Insert method -----
-    public boolean setYear(int _) {
-        if (_ > Constant.YEAR_MAX)
+
+    /**
+     * Insert year value.
+     *
+     * @param value the value want to insert
+     * @return if insert successfully
+     */
+    public boolean setYear(int value) {
+        if (value > Constant.YEAR_MAX) {
             return false;
-        year = _;
+        }
+        year = value;
         return true;
     }
 
-    public boolean setMonth(int _) {
-        if (_ > Constant.MONTH_MAX)
+    /**
+     * Insert month value.
+     *
+     * @param value the value want to insert
+     * @return if insert successfully
+     */
+    public boolean setMonth(int value) {
+        if (value > Constant.MONTH_MAX) {
             return false;
-        month = _;
+        }
+        month = value;
         return true;
     }
 
-    public boolean setDay(int _) {
-        if (_ > Constant.DAY_MAX)
+    /**
+     * Insert day value.
+     *
+     * @param value the value want to insert
+     * @return if insert successfully
+     */
+    public boolean setDay(int value) {
+        if (value > Constant.DAY_MAX) {
             return false;
-        day = _;
+        }
+        day = value;
         return true;
     }
 
-    public boolean setHour(int _) {
-        if (_ > Constant.HOUR_MAX)
+    /**
+     * Insert hour value.
+     *
+     * @param value the value want to insert
+     * @return if insert successfully
+     */
+    public boolean setHour(int value) {
+        if (value > Constant.HOUR_MAX) {
             return false;
-        hour = _;
+        }
+        hour = value;
         return true;
     }
 
-    public boolean setMinute(int _) {
-        if (_ > Constant.MINUTE_MAX)
+    /**
+     * Insert minute value.
+     *
+     * @param value the value want to insert
+     * @return if insert successfully
+     */
+    public boolean setMinute(int value) {
+        if (value > Constant.MINUTE_MAX) {
             return false;
-        minute = _;
+        }
+        minute = value;
         return true;
     }
 
     // ----- Get method -----
-    int getYear() {
+    public int getYear() {
         return year;
 
     }
 
-    int getMonth() {
+    public int getMonth() {
         return month;
 
     }
 
-    int getDay() {
+    public int getDay() {
         return day;
 
     }
 
-    int getHour() {
+    public int getHour() {
         return hour;
 
     }
 
-    int getMinute() {
+    public int getMinute() {
         return minute;
 
     }
 
     // ----- Other method -----
-    public void Now() {
-        Calendar c = Calendar.getInstance();
-        year = c.get(Calendar.YEAR);
-        month = c.get(Calendar.MONTH)+1;
-        day = c.get(Calendar.DAY_OF_MONTH);
-        hour = c.get(Calendar.HOUR);
-        minute = c.get(Calendar.MINUTE);
+
+    /**
+     * Set the value according to the current time.
+     */
+    public void now() {
+        Calendar calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH) + 1;
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        hour = calendar.get(Calendar.HOUR);
+        minute = calendar.get(Calendar.MINUTE);
     }
 
-    public String _toString(){
+    /**
+     * Word object to the string type.
+     *
+     * @return the string
+     */
+    public String toString() {
         String res = "";
         res = res + year + "\n";
         res = res + month + "\n";

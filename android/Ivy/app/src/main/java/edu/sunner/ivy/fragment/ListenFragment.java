@@ -12,77 +12,108 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import edu.sunner.ivy.ListAdapter.ListenListAdapter;
+import edu.sunner.ivy.Constant;
 import edu.sunner.ivy.Parser;
 import edu.sunner.ivy.R;
 
+import java.util.Locale;
+
 /**
- * Created by sunner on 9/3/16.
+ * This is the listening fragment which define the whole things in listen mode
+ *
+ * @author sunner
+ * @since 9/3/16.
  */
 public class ListenFragment extends Fragment implements TextToSpeech.OnInitListener {
     // Text to speech object
-    public static TextToSpeech t;
+    private static TextToSpeech TTS;
 
     // Accent counter
-    int accent = 0;
+    private int accent = 0;
 
     // List adapter object
-    ListenListAdapter1 adapter;
+    private ListenListAdapter1 adapter;
 
     // View object
-    View view;
+    private View view;
+    private ListView list;
 
-    // setting list view
-    ListView list;
-
-    // setting list view description
-    String[] setting_des = {
-            "\n\tPlay Now",
-            "\n\tSpeaking Speed"
+    // Setting list view description
+    private String[] settingdescriptors = {
+        "\n\tPlay Now",
+        "\n\tSpeaking Speed"
     };
 
-    /*
-        Defined List Adapter
-        Cause We should supervise the flag that would terminate the TTS
-        Thus We don't seperate from the origin program
+    /**
+     * Defined List Adapter
+     * Cause We should supervise the flag that would terminate the TTS
+     * Thus We don't seperate from the origin program.
      */
     public class ListenListAdapter1 extends ArrayAdapter {
+        // Fragment object
         private Fragment fragment;
-        private String[] setting_texts;
-        private String[][] arr = {{"   Yes   ", "   No   "}, {"Slower", "Normal"}};                 // Switch text description
-        Parser p = new Parser();                                                                    // Defined parser object
-        public boolean stop = false;                                                                // Control flag to terminate the TTS
-        public int startIndex = 0;                                                                  // Start index toward parser list
 
-        TextView txtTitle;
-        Switch sswitch;
+        // String array to store the setting descriptions
+        private String[] settingtexts;
+
+        // Switch text description
+        private String[][] arr = {{"   Yes   ", "   No   "}, {"Slower", "Normal"}};
+
+        // parser object
+        private Parser parser = new Parser();
+
+        // Control flag to terminate the TTS
+        private boolean stop = false;
+
+        // Start index toward parser list
+        private int startIndex = 0;
+
+        // View object
+        private TextView txtTitle;
+        private Switch sswitch;
 
         // Speak Runnable
-        Runnable speakRunnable = new Runnable() {
+        private Runnable speakRunnable = new Runnable() {
             @Override
             public void run() {
-                for (int i = startIndex; i < p.length() && !stop; i++) {
-                    t.speak(p.getEnglish(i), TextToSpeech.QUEUE_ADD, null);
+                for (int i = startIndex; i < parser.length() && !stop; i++) {
+                    TTS.speak(parser.getEnglish(i), TextToSpeech.QUEUE_ADD, null);
                     try {
                         Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (InterruptedException err) {
+                        err.printStackTrace();
                     }
+
+                    if (accent == 0) {      // Change the country for each 10 times
+                        TTS.setLanguage(new Locale("en", "GB"));
+                    } else if (accent == 5) {
+                        TTS.setLanguage(new Locale("en", "US"));
+                    } else if (accent == 10) {
+                        TTS.setLanguage(new Locale("en", "AS"));
+                    }
+                    accent = (accent + 1) % 15;
                 }
             }
         };
 
-        // Constructor
-        public ListenListAdapter1(View view, Fragment f, String[] setting_texts, TextToSpeech t) {
-            super(view.getContext(), R.layout.list_listen, setting_texts);
-            this.fragment = f;
-            this.setting_texts = setting_texts;
-            p.readWork();
+        /**
+         * Constructor.
+         *
+         * @param view          the view object
+         * @param fragment      the fragment object
+         * @param settingTexts  the setting text which would be shown below
+         * @param tts           ( deprecated parameter )
+         */
+        public ListenListAdapter1(View view, Fragment fragment, String[] settingTexts,
+                                  TextToSpeech tts) {
+            super(view.getContext(), R.layout.list_listen, settingTexts);
+            this.fragment = fragment;
+            this.settingtexts = settingTexts;
+            parser.readWork();
         }
 
         @Override
@@ -96,95 +127,111 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
             return rowView;
         }
 
-        /*
-            Get view object and set the description
+        /**
+         * Get view object and set the description.
+         *
+         * @param rowView  the view object
+         * @param position the position index in the listView
          */
         public void setView(View rowView, int position) {
             txtTitle = (TextView) rowView.findViewById(R.id.txt);
-            txtTitle.setText(setting_texts[position]);
+            txtTitle.setText(settingtexts[position]);
 
             sswitch = (Switch) rowView.findViewById(R.id.switch1);
             sswitch.setTextOn(arr[position][0]);
             sswitch.setTextOff(arr[position][1]);
         }
 
-        /*
-            Set the switch listener
+        /**
+         * Set the switch listener.
+         *
+         * @param position the position index in the listView
          */
         public void setListener(final int position) {
             sswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                public void onCheckedChanged(CompoundButton compoundButton, boolean boo) {
                     switch (position) {
                         case 0:
-                            if (b)
+                            if (boo) {
                                 new Thread(speakRunnable).start();
-                            else
+                            } else {
                                 stop = true;
+                            }
                             break;
                         case 1:
-                            if (b) {
-                                t.setSpeechRate(0.8f);
-                                Log.d("??", "降訴");
-                            }
-                            else{
-                                t.setSpeechRate(1);
-                                Log.d("??", "正常速度");
+                            if (boo) {
+                                TTS.setSpeechRate(0.8f);
+                                Log.i(Constant.LFT_TAG, "降速");
+                            } else {
+                                TTS.setSpeechRate(1);
+                                Log.i(Constant.LFT_TAG, "正常速度");
                             }
                             break;
                         default:
-                            Log.d("??", "未知list row");
+                            Log.d(Constant.LFT_TAG, "未知list row");
                             break;
                     }
                 }
             });
         }
 
-        // Shuffle the start index and speak again
-        public void again(){
+        /**
+         * Shuffle the start index and speak again.
+         */
+        public void again() {
 
             try {
                 stop = true;
                 Thread.sleep(1000);
                 stop = false;
-                startIndex = (int) (Math.random() * (p.length()-1));
+                startIndex = (int) (Math.random() * (parser.length() - 1));
                 new Thread(speakRunnable).start();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException err) {
+                err.printStackTrace();
             }
         }
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.fragment_listen, container, false);
 
         list = (ListView) view.findViewById(R.id.settingList);
-        adapter = new ListenListAdapter1(view, ListenFragment.this, setting_des, t);
+        adapter = new ListenListAdapter1(view, ListenFragment.this, settingdescriptors, TTS);
         list.setAdapter(adapter);
 
-        loadTTSEngine();
+        loadTtsEngine();
         return view;
     }
 
-    // Implement loading the TTS engine
-    public void loadTTSEngine() {
-        Intent checkTTSIntent = new Intent();
-        checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        startActivityForResult(0, 1, checkTTSIntent);
+    /**
+     * Implement loading the TTS engine.
+     */
+    public void loadTtsEngine() {
+        Intent checkTtsIntent = new Intent();
+        checkTtsIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(0, 1, checkTtsIntent);
     }
 
-    // Examine if the engine has been install
+    /**
+     * Examine if the engine has been install.
+     *
+     * @param requestCode the override parameter
+     * @param resultCode  the override parameter
+     * @param data        the override parameter
+     */
     private void startActivityForResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                t = new TextToSpeech(getActivity(), this);
+                TTS = new TextToSpeech(getActivity(), this);
             } else {
-                Intent installTTSIntent = new Intent();
-                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                startActivity(installTTSIntent);
+                Intent installTtsIntent = new Intent();
+                installTtsIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installTtsIntent);
             }
         }
     }
@@ -195,8 +242,8 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
             Log.d("設定", "finish");
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException err) {
+                err.printStackTrace();
             }
         }
     }
@@ -205,11 +252,18 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
     public void onStart() {
         super.onStart();
 
-        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.again);
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.again);
+        fab.setImageResource(R.drawable.ic_help_black_24dp);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapter.again();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        super.run();
+                        adapter.again();
+                    }
+                }.start();
             }
         });
     }

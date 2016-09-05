@@ -11,39 +11,42 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
+import android.widget.Toast;
 
 import edu.sunner.ivy.Constant;
-import edu.sunner.ivy.ListAdapter.SettingListAdapter;
 import edu.sunner.ivy.R;
-import edu.sunner.ivy.chooseFrom4;
+import edu.sunner.ivy.listadapter.SettingListAdapter;
 
 /**
- * Created by sunner on 9/3/16.
+ * The setting fragment which would be called in practice function
+ *
+ * @author sunner
+ * @since 9/3/16.
  */
-public class Setting extends Fragment {
-    View view;
-    ListView list;
-    String[] setting_texts = {
-            "\n\tShow the text",
-            "\n\tOpen Speaking",
-            "\n\tPractice Mode"
+public class SettingFragment extends Fragment {
+    // View object
+    private View view;
+    private ListView list;
+
+    // The setting text array
+    private String[] settingtexts = {
+        "\n\tShow the text",
+        "\n\tOpen Speaking",
+        "\n\tPractice Mode"
     };
-    Spinner[] spinners = new Spinner[3];
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.fragment_setting, container, false);
 
         list = (ListView) view.findViewById(R.id.settingList);
 
-        SettingListAdapter settingListAdapter = new SettingListAdapter(view, Setting.this, setting_texts);
-        //ArrayAdapter<String> settingListAdapter = new ArrayAdapter(view.getContext(), android.R.layout.simple_expandable_list_item_1, setting_texts);
-        list.setAdapter(settingListAdapter);
+        SettingListAdapter ad = new SettingListAdapter(view, SettingFragment.this, settingtexts);
+        list.setAdapter(ad);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -51,7 +54,8 @@ public class Setting extends Fragment {
             }
         });
 
-        FloatingActionButton back = (FloatingActionButton)view.findViewById(R.id.back);
+        FloatingActionButton back = (FloatingActionButton) view.findViewById(R.id.back);
+        back.setImageResource(R.drawable.ic_arrow_back_black_24dp);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,21 +63,24 @@ public class Setting extends Fragment {
                 Bundle bundle = new Bundle();
 
                 // Jump back
-                switch (getArguments().getInt(Constant.MODE_KEY)){
+                switch (getArguments().getInt(Constant.MODE_KEY)) {
                     case Constant.FUNDAMENTAL:
-                        fragment = new chooseFrom4();
+                        fragment = new ChooseFromFourFragment();
                         bundle.putInt(Constant.MODE_KEY, Constant.FUNDAMENTAL);
+                        getActivity().setTitle(R.string.fundamental_mode);
                         break;
                     case Constant.ADVANCE:
-                        fragment = new chooseFrom4();
+                        fragment = new ChooseFromFourFragment();
                         bundle.putInt(Constant.MODE_KEY, Constant.ADVANCE);
+                        getActivity().setTitle(R.string.advance_mode);
                         break;
                     case Constant.STRENGTHEN:
-                        fragment = new chooseFrom4();
+                        fragment = new ChooseFromFourFragment();
                         bundle.putInt(Constant.MODE_KEY, Constant.STRENGTHEN);
+                        getActivity().setTitle(R.string.strengthen_mode);
                         break;
                     default:
-                        Log.e("??", "error mode");
+                        Log.e(Constant.SFT_TAG, "error mode");
                 }
                 fragment.setArguments(bundle);
 
@@ -86,5 +93,14 @@ public class Setting extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getArguments().getInt(Constant.MODE_KEY) == Constant.ADVANCE) {
+            Toast.makeText(getActivity(), "The setting in advance mode is random",
+                Toast.LENGTH_LONG).show();
+        }
     }
 }
