@@ -3,6 +3,8 @@ package edu.sunner.ivy.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -41,11 +43,36 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
     // View object
     private View view;
     private ListView list;
+    private Switch outSwitch;
 
     // Setting list view description
     private String[] settingdescriptors = {
         "\n\tPlay Now",
         "\n\tSpeaking Speed"
+    };
+
+    // Control flag to terminate the TTS
+    private static boolean stop = false;
+
+    // Recover Handler
+    private Handler switchHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case Constant.OPEN:
+                    Log.v(Constant.LFT_TAG, "設定藍色");
+                    outSwitch.setChecked(true);
+                    break;
+                case Constant.CLOSE:
+                    Log.v(Constant.LFT_TAG, "設定黑色");
+                    outSwitch.setChecked(false);
+                    break;
+                default:
+                    Log.e(Constant.LFT_TAG, "異常switch what");
+                    break;
+            }
+        }
     };
 
     /**
@@ -66,47 +93,64 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
         // parser object
         private Parser parser = new Parser();
 
-        // Control flag to terminate the TTS
-        private boolean stop = false;
 
         // Start index toward parser list
         private int startIndex = 0;
 
         // View object
         private TextView txtTitle;
-        private Switch sswitch;
+        protected Switch sswitch;
+
+        // Launch counter
+        int count = 0;
+        int msg = Constant.CLOSE;
 
         // Speak Runnable
         private Runnable speakRunnable = new Runnable() {
             @Override
             public void run() {
-                for (int i = startIndex; i < parser.length() && !stop; i++) {
-                    TTS.speak(parser.getEnglish(i), TextToSpeech.QUEUE_ADD, null);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException err) {
-                        err.printStackTrace();
-                    }
-
-                    if (accent == 0) {      // Change the country for each 10 times
-                        TTS.setLanguage(new Locale("en", "GB"));
-                    } else if (accent == 5) {
-                        TTS.setLanguage(new Locale("en", "US"));
-                    } else if (accent == 10) {
-                        TTS.setLanguage(new Locale("en", "AS"));
-                    }
-                    accent = (accent + 1) % 15;
+                // Wait for the stop flag to tern false
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException err) {
+                    err.printStackTrace();
                 }
+                if (!isSilent()) {
+                    for (int i = startIndex; i < parser.length() && !stop; i++) {
+                        TTS.speak(parser.getEnglish(i), TextToSpeech.QUEUE_ADD, null);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException err) {
+                            err.printStackTrace();
+                        }
+
+                        if (accent == 0) {      // Change the country for each 10 times
+                            TTS.setLanguage(new Locale("en", "GB"));
+                        } else if (accent == 5) {
+                            TTS.setLanguage(new Locale("en", "US"));
+                        } else if (accent == 10) {
+                            TTS.setLanguage(new Locale("en", "AS"));
+                        }
+                        accent = (accent + 1) % 15;
+                    }
+                } else {
+                    Log.v(Constant.LFT_TAG, "is silent");
+                }
+
+                // Tell handler to close the button
+                Message message = new Message();
+                message.what = Constant.CLOSE;
+                switchHandler.sendMessage(message);
             }
         };
 
         /**
          * Constructor.
          *
-         * @param view          the view object
-         * @param fragment      the fragment object
-         * @param settingTexts  the setting text which would be shown below
-         * @param tts           ( deprecated parameter )
+         * @param view         the view object
+         * @param fragment     the fragment object
+         * @param settingTexts the setting text which would be shown below
+         * @param tts          ( deprecated parameter )
          */
         public ListenListAdapter1(View view, Fragment fragment, String[] settingTexts,
                                   TextToSpeech tts) {
@@ -121,9 +165,20 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
             LayoutInflater inflater = fragment.getActivity().getLayoutInflater();
             View rowView = inflater.inflate(R.layout.list_listen, null, true);
 
-            setView(rowView, position);
-            setListener(position);
+            /*
+                With anonymous factor, the adapter migh call getView for 6 times.
+                But In the list there're only 4 view object.
+                At the same time, the button might lose the view control.
+                So I guess the switch view might be override that cannot control directly.
 
+                In the result, I restrict the max times that the getView can be called.
+                If the list is extent in the future, you should increase the limit.
+             */
+            if (count < Constant.TOTAL_OBJ_IN_LISTVIEW) {
+                setView(rowView, position);
+                setListener(position);
+            }
+            count++;
             return rowView;
         }
 
@@ -137,9 +192,16 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
             txtTitle = (TextView) rowView.findViewById(R.id.txt);
             txtTitle.setText(settingtexts[position]);
 
-            sswitch = (Switch) rowView.findViewById(R.id.switch1);
-            sswitch.setTextOn(arr[position][0]);
-            sswitch.setTextOff(arr[position][1]);
+
+            if (position == 0) {
+                outSwitch = (Switch) rowView.findViewById(R.id.switch1);
+                outSwitch.setTextOn(arr[position][0]);
+                outSwitch.setTextOff(arr[position][1]);
+            } else {
+                sswitch = (Switch) rowView.findViewById(R.id.switch1);
+                sswitch.setTextOn(arr[position][0]);
+                sswitch.setTextOff(arr[position][1]);
+            }
         }
 
         /**
@@ -148,48 +210,58 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
          * @param position the position index in the listView
          */
         public void setListener(final int position) {
-            sswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean boo) {
-                    switch (position) {
-                        case 0:
-                            if (boo) {
-                                new Thread(speakRunnable).start();
-                            } else {
-                                stop = true;
-                            }
-                            break;
-                        case 1:
-                            if (boo) {
-                                TTS.setSpeechRate(0.8f);
-                                Log.i(Constant.LFT_TAG, "降速");
-                            } else {
-                                TTS.setSpeechRate(1);
-                                Log.i(Constant.LFT_TAG, "正常速度");
-                            }
-                            break;
-                        default:
-                            Log.d(Constant.LFT_TAG, "未知list row");
-                            break;
+            if (position == 0) {
+                outSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean boo) {
+                        if (boo) {
+                            stop = false;
+                            new Thread(speakRunnable).start();
+                        } else {
+                            stop = true;
+                        }
                     }
-                }
-            });
+                });
+            } else if (position == 1) {
+                sswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean boo) {
+                        if (boo) {
+                            TTS.setSpeechRate(0.8f);
+                            Log.i(Constant.LFT_TAG, "降速");
+                        } else {
+                            TTS.setSpeechRate(1);
+                            Log.i(Constant.LFT_TAG, "正常速度");
+                        }
+                    }
+                });
+            } else {
+                Log.d(Constant.LFT_TAG, "未知position");
+            }
+
         }
 
         /**
          * Shuffle the start index and speak again.
          */
         public void again() {
+            // Close the button first
+            Message message = new Message();
+            message.what = Constant.CLOSE;
+            switchHandler.sendMessage(message);
 
+            // Wait the Previous runnable terminate
             try {
-                stop = true;
-                Thread.sleep(1000);
-                stop = false;
-                startIndex = (int) (Math.random() * (parser.length() - 1));
-                new Thread(speakRunnable).start();
+                Thread.sleep(100);
             } catch (InterruptedException err) {
                 err.printStackTrace();
             }
+
+            // Then shuffle the start index and open the button
+            startIndex = (int) (Math.random() * (parser.length() - 1));
+            message = new Message();
+            message.what = Constant.OPEN;
+            switchHandler.sendMessage(message);
         }
     }
 
@@ -202,6 +274,7 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
 
         list = (ListView) view.findViewById(R.id.settingList);
         adapter = new ListenListAdapter1(view, ListenFragment.this, settingdescriptors, TTS);
+        Log.d(Constant.LFT_TAG, "onCreateView");
         list.setAdapter(adapter);
 
         loadTtsEngine();
@@ -245,6 +318,20 @@ public class ListenFragment extends Fragment implements TextToSpeech.OnInitListe
             } catch (InterruptedException err) {
                 err.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Check the shared paference if it's at silent setting.
+     *
+     * @return if it's at silent setting
+     */
+    public boolean isSilent() {
+        if (getActivity().getSharedPreferences(Constant.PRE_NAME, 0)
+            .getInt(Constant.SETTING_SILENT, Constant.YES) == Constant.YES) {
+            return true;
+        } else {
+            return false;
         }
     }
 

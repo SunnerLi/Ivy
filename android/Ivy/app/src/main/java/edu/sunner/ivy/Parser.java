@@ -216,7 +216,7 @@ public class Parser {
                     // read number of watch
                     word.setNumberOfWatch(Integer.valueOf(bufferedReader.readLine()));
                     words.add(word);
-                    word.show();
+                    // word.show();
                 }
                 fis.close();
             }

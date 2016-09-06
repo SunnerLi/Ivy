@@ -52,6 +52,7 @@ public class ChooseFromFourFragment extends Fragment implements TextToSpeech.OnI
     private int settingShowText = Constant.YES;
     private int settingSpeaking = Constant.YES;
     private int settingMode = Constant.FOUR_CHOOSE_ONE;
+    private int settingSilent = Constant.YES;
 
     // Options button view objects
     private AppCompatButton[] optionsbtns = new AppCompatButton[4];
@@ -87,10 +88,6 @@ public class ChooseFromFourFragment extends Fragment implements TextToSpeech.OnI
     // Control flags
     private static boolean hasPress = false;
     private static boolean hasWatch = false;
-
-    // Message
-    private Message right;
-    private Message wrong;
 
     /**
      * The runnable to define the action of giving question.
@@ -288,8 +285,10 @@ public class ChooseFromFourFragment extends Fragment implements TextToSpeech.OnI
             super.handleMessage(msg);
             String info;
             if (msg.what == 1) {
+                Log.v(Constant.CFFFT_TAG, "You are right !!!!!!!!!!!");
                 info = "\tYou are Right !!!\n\n";
             } else {
+                Log.v(Constant.CFFFT_TAG, "You are wrong ...........");
                 info = "\tYou are Wrong ...\n\n";
             }
             if (settingMode == Constant.FOUR_CHOOSE_ONE) {
@@ -317,6 +316,7 @@ public class ChooseFromFourFragment extends Fragment implements TextToSpeech.OnI
                     }
                 }
             }
+            this.obtainMessage();
             card.setText(info);
         }
     };
@@ -346,7 +346,9 @@ public class ChooseFromFourFragment extends Fragment implements TextToSpeech.OnI
      * @param string the sentence want to say
      */
     public void speak(String string) {
-        tts.speak(string, TextToSpeech.QUEUE_ADD, null);
+        if (settingSilent == Constant.NO) {
+            tts.speak(string, TextToSpeech.QUEUE_ADD, null);
+        }
     }
 
     /**
@@ -356,6 +358,10 @@ public class ChooseFromFourFragment extends Fragment implements TextToSpeech.OnI
     public void sendRightMsg() {
         Log.v(Constant.CFFFT_TAG, "You are right !!!!!!!!!!!");
         numberOfRight++;
+
+        // Generate new Message object
+        Message right = new Message();
+        right.what = 1;
         ansHandler.sendMessage(right);
     }
 
@@ -366,6 +372,10 @@ public class ChooseFromFourFragment extends Fragment implements TextToSpeech.OnI
         // increase the wrong counter
         Log.v(Constant.CFFFT_TAG, "You are wrong ...........");
         parser.increaseNumberOfWrong(phoneAnswer);
+
+        // Generate new Message object
+        Message wrong = new Message();
+        wrong.what = 0;
         ansHandler.sendMessage(wrong);
 
         // information changed, update the file
@@ -423,15 +433,12 @@ public class ChooseFromFourFragment extends Fragment implements TextToSpeech.OnI
         settingShowText = settings.getInt(Constant.SETTING_SHOWTEXT_KEY, Constant.YES);
         settingSpeaking = settings.getInt(Constant.SETTING_SPEAKING_KEY, Constant.NO);
         settingMode = settings.getInt(Constant.SETTING_MODE_KEY, Constant.FOUR_CHOOSE_ONE);
+        settingSilent = settings.getInt(Constant.SETTING_SILENT, Constant.YES);
         Log.d(Constant.CFFFT_TAG, "complete get setting from shared preference");
-        Log.d(Constant.CFFFT_TAG, "setting_showText: " + settingShowText + "\t\tsetting_speaking: "
-            + settingSpeaking + "\t\tsetting_mode: " + settingMode);
-
-        // Get the message object
-        right = new Message();
-        wrong = new Message();
-        right.what = 1;
-        wrong.what = 0;
+        Log.d(Constant.CFFFT_TAG, "setting_showText: " + settingShowText
+            + "\t\tsetting_speaking: " + settingSpeaking
+            + "\t\tsetting_mode: " + settingMode
+            + "\t\tsetting_silent:" + settingSilent);
     }
 
     @Override
@@ -568,22 +575,18 @@ public class ChooseFromFourFragment extends Fragment implements TextToSpeech.OnI
                     if (settingSpeaking == Constant.YES) {
                         if (settingMode == Constant.FOUR_CHOOSE_ONE) {
                             if (mode != Constant.STRENGTHEN) {
-                                tts.speak(parser.getEnglish(phoneAnswer),
-                                    TextToSpeech.QUEUE_ADD, null);
+                                speak(parser.getEnglish(phoneAnswer));
                             } else {
-                                tts.speak(parser.weakgetEnglish(phoneAnswer),
-                                    TextToSpeech.QUEUE_ADD, null);
+                                speak(parser.weakgetEnglish(phoneAnswer));
                             }
                         } else {
                             if (mode != Constant.STRENGTHEN) {
                                 for (int i = 0; i < 3; i++) {
-                                    tts.speak(parser.getEnglish(candicates[i]),
-                                        TextToSpeech.QUEUE_ADD, null);
+                                    speak(parser.getEnglish(candicates[i]));
                                 }
                             } else {
                                 for (int i = 0; i < 3; i++) {
-                                    tts.speak(parser.weakgetEnglish(candicates[i]),
-                                        TextToSpeech.QUEUE_ADD, null);
+                                    speak(parser.weakgetEnglish(candicates[i]));
                                 }
                             }
                         }

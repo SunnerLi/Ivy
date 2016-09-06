@@ -17,6 +17,7 @@ public class Constant {
     public static final String SETTING_SHOWTEXT_KEY = "show key";
     public static final String SETTING_SPEAKING_KEY = "speak key";
     public static final String SETTING_MODE_KEY = "mode key";
+    public static final String SETTING_SILENT = "silent";
 
     // Mode Constant
     public static final int FUNDAMENTAL = 0;
@@ -40,6 +41,13 @@ public class Constant {
     public static final int NO = 0;
     public static final int FOUR_CHOOSE_ONE = 2;
     public static final int FOUR_DELETE_THREE = 3;
+
+    // Switch in the Listen Mode
+    public static final int OPEN = 1;
+    public static final int CLOSE = 0;
+
+    // Constant to limit the Adapter override the switch object
+    public static final int TOTAL_OBJ_IN_LISTVIEW = 4;
 
     /*
         Log tag

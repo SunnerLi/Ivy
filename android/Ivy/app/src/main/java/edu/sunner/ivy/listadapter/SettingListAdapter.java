@@ -31,7 +31,7 @@ public class SettingListAdapter extends ArrayAdapter<String> {
     private String[] settingtexts;
 
     // String array that store each options in the spinners
-    private String[][] arr = {{"Yes", "No"}, {"Yes", "No"}, {"四選一ㄕ", "四刪三"}};
+    private String[][] arr = {{"Yes", "No"}, {"Yes", "No"}, {"四選一ㄕ", "四刪三"}, {"Yes", "No"}};
 
     // Spinner object that would be used in the list
     private Spinner spinner;
@@ -39,8 +39,8 @@ public class SettingListAdapter extends ArrayAdapter<String> {
     /**
      * Constructor.
      *
-     * @param view view object
-     * @param fragment fragment object
+     * @param view         view object
+     * @param fragment     fragment object
      * @param settingTexts the setting text descriptions
      */
     public SettingListAdapter(View view, Fragment fragment, String[] settingTexts) {
@@ -91,6 +91,14 @@ public class SettingListAdapter extends ArrayAdapter<String> {
             case 2:
                 prev = settings.getInt(Constant.SETTING_MODE_KEY, Constant.FOUR_CHOOSE_ONE);
                 if (prev == Constant.FOUR_CHOOSE_ONE) {
+                    spinner.setSelection(0);
+                } else {
+                    spinner.setSelection(1);
+                }
+                break;
+            case 3:
+                prev = settings.getInt(Constant.SETTING_SILENT, Constant.YES);
+                if (prev == Constant.YES) {
                     spinner.setSelection(0);
                 } else {
                     spinner.setSelection(1);
@@ -161,6 +169,15 @@ public class SettingListAdapter extends ArrayAdapter<String> {
                         }
                         settings.edit().putInt(Constant.SETTING_MODE_KEY, choose).commit();
                         Log.d(Constant.SLAR_TAG, "mode以修改: " + choose);
+                        break;
+                    case 3:
+                        if (val == 0) {
+                            choose = Constant.YES;
+                        } else {
+                            choose = Constant.NO;
+                        }
+                        settings.edit().putInt(Constant.SETTING_SILENT, choose).commit();
+                        Log.d(Constant.SLAR_TAG, "禁音: " + choose);
                         break;
                     default:
                         Log.e(Constant.SLAR_TAG, "未知list row");

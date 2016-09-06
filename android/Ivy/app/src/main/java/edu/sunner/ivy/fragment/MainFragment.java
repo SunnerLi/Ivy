@@ -3,14 +3,17 @@ package edu.sunner.ivy.fragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import edu.sunner.ivy.Constant;
 import edu.sunner.ivy.R;
@@ -26,6 +29,7 @@ import edu.sunner.ivy.listadapter.MainListAdapter;
 public class MainFragment extends Fragment {
     // List view object
     private ListView list;
+    private View view;
 
     // The mode explaination text
     private String[] modes = {
@@ -43,12 +47,15 @@ public class MainFragment extends Fragment {
         R.drawable.ic_hearing_black_big_24dp
     };
 
+    // Silent setting flag
+    static boolean isSilent = true;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        view = inflater.inflate(R.layout.fragment_main, container, false);
         list = (ListView) view.findViewById(R.id.mainList);
 
         MainListAdapter adapter = new
@@ -88,14 +95,54 @@ public class MainFragment extends Fragment {
                 fragment.setArguments(bundle);
 
                 // Jump to the fragment
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction ft = fragmentManager.beginTransaction();
-                ft.replace(R.id.content_frame, fragment);
-                ft.commit();
-
+                if (!isSilent || position != 1) {
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                    ft.replace(R.id.content_frame, fragment);
+                    ft.commit();
+                } else {
+                    getActivity().setTitle(R.string.app_name);
+                    Toast.makeText(getActivity(), "Silent setting cannot enter Advance Mode",
+                        Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Read silent setting
+        final SharedPreferences setting = view.getContext()
+            .getSharedPreferences(Constant.PRE_NAME, 0);
+        if (setting.getInt(Constant.SETTING_SILENT, Constant.YES) == Constant.YES) {
+            isSilent = true;
+        } else {
+            isSilent = false;
+        }
+
+        // Set image resource and listener
+        final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.silent);
+        if (isSilent) {
+            fab.setImageResource(R.drawable.ic_volume_off_black_24dp);
+        } else {
+            fab.setImageResource(R.drawable.ic_volume_up_black_24dp);
+        }
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isSilent) {      // Set as normal
+                    isSilent = false;
+                    fab.setImageResource(R.drawable.ic_volume_up_black_24dp);
+                    setting.edit().putInt(Constant.SETTING_SILENT, Constant.NO).commit();
+                } else {             // Set as silent
+                    isSilent = true;
+                    fab.setImageResource(R.drawable.ic_volume_off_black_24dp);
+                    setting.edit().putInt(Constant.SETTING_SILENT, Constant.YES).commit();
+                }
+            }
+        });
+    }
 }

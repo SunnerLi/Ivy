@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import edu.sunner.ivy.Constant;
 import edu.sunner.ivy.R;
@@ -160,6 +162,14 @@ public class MainActivity extends AppCompatActivity {
         }
         fragment.setArguments(bundle);
 
+        // Check if it's at silent setting
+        if (isSilent() && menuItem.getItemId() == R.id.advance_mode) {
+            setTitle(R.string.app_name);
+            Toast.makeText(this, "Silent setting cannot enter Advance Mode",
+                Toast.LENGTH_SHORT).show();
+            fragment = new MainFragment();
+        }
+
         // Jump to the fragment
         setTitle(menuItem.getTitle());
         FragmentManager fragmentManager = getFragmentManager();
@@ -167,7 +177,22 @@ public class MainActivity extends AppCompatActivity {
         ft.replace(R.id.content_frame, fragment);
         ft.commit();
 
+
         return true;
+    }
+
+    /**
+     * Check the shared paference if it's at silent setting.
+     *
+     * @return if it's at silent setting
+     */
+    public boolean isSilent() {
+        if (this.getSharedPreferences(Constant.PRE_NAME, 0)
+            .getInt(Constant.SETTING_SILENT, Constant.YES) == Constant.YES) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

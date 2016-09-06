@@ -33,7 +33,8 @@ public class SettingFragment extends Fragment {
     private String[] settingtexts = {
         "\n\tShow the text",
         "\n\tOpen Speaking",
-        "\n\tPractice Mode"
+        "\n\tPractice Mode",
+        "\n\tSilent"
     };
 
     @Nullable
