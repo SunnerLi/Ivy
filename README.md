@@ -1,6 +1,6 @@
 # Ivy
 [![Packagist](https://img.shields.io/badge/CheckStyle-passing-red.svg)]()    
-A simple telegram bot that can help you remember the English vocabulary.    
+A simple android APP that can help you remember the English vocabulary.    
 
 <p align="center">
   <img src="https://github.com/SunnerLi/Vivian/blob/master/Android/Vivian/app/src/main/res/drawable/vivian_icon_small.png"/>
